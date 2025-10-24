@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulateur Salaire – JS (basé sur FISCA_UTILITY_PKG)</title>
+  <style>
+    :root {
+      --bg:#f5f7fb; --panel:#ffffff; --muted:#64748b; --text:#0f172a; --accent:#2563eb; --accent-ink:#0b3aa4; --danger:#ef4444; --card:#ffffff; --border:#e5e7eb; --ring:#93c5fd;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text)}
+    header{padding:28px 24px;text-align:center}
+    header h1{margin:0 0 6px;font-size:28px;letter-spacing:.3px}
+    header p{margin:0;color:var(--muted)}
+    .container{max-width:1180px;margin:0 auto;padding:16px 24px 40px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr)}
+    .card{grid-column:span 12;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 8px 30px rgba(2,6,23,.06)}
+    @media (min-width:980px){.card.half{grid-column:span 6}}
+    .card h2{margin:0 0 12px;font-size:18px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);transition:box-shadow .15s,border-color .15s}
+    input:focus,select:focus,textarea:focus{outline:0;box-shadow:0 0 0 3px var(--ring);border-color:#bfdbfe}
+    textarea{min-height:120px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:none;cursor:pointer;padding:10px 14px;border-radius:12px;font-weight:600;transition:transform .06s ease,box-shadow .15s}
+    .btn:active{transform:translateY(1px)}
+    .primary{background:var(--accent);color:#fff}
+    .primary:hover{box-shadow:0 6px 18px rgba(37,99,235,.25)}
+    .ghost{background:#fff;border:1px solid var(--border);color:#0f172a}
+    .ghost:hover{box-shadow:0 4px 14px rgba(2,6,23,.08)}
+    .sec-title{margin:18px 0 8px;font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .results{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .tile{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px}
+    .tile .label{font-size:11px;color:var(--muted)}
+    .tile .value{font-size:18px;font-weight:700}
+    .hr{height:1px;background:var(--border);margin:14px 0}
+    details.params{border:1px dashed var(--border);border-radius:14px;background:#fff}
+    details.params summary{cursor:pointer;font-weight:700;padding:12px 14px}
+    .params-body{padding:0 14px 14px}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{padding:10px 12px;border:1px solid var(--border);background:#fff}
+    th{background:#f8fafc;text-align:left;font-size:12px;color:#0f172a}
+    td input, td select{width:100%}
+    .muted{color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simulateur Salaire (Brut ⇄ Net)</h1>
+    <p>Calcul IR, IPRES (RG/RC), CSS (Prest. familiales & Accidents du travail), TRIMF.</p>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <!-- BRUT => NET -->
+      <section class="card half" id="panel-b2n">
+        <h2>Brut → Net</h2>
+        <div class="row3">
+          <div>
+            <label for="b2n_brut">Brut imposable</label>
+            <input id="b2n_brut" type="text" inputmode="decimal" value="750000" />
+          </div>
+          <div>
+            <label for="b2n_mois">Nombre de mois (1–12)</label>
+            <input id="b2n_mois" type="number" min="1" max="12" step="1" value="12" />
+          </div>
+          <div>
+            <label for="b2n_parts">Nombre de parts</label>
+            <input id="b2n_parts" type="text" inputmode="decimal" value="1.5" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="b2n_conjoints">Nombre de conjoints (TRIMF)</label>
+            <input id="b2n_conjoints" type="number" min="0" step="1" value="0" />
+          </div>
+          <div>
+            <label for="b2n_cadre">Cadre ?</label>
+            <select id="b2n_cadre">
+              <option value="Y">Oui</option>
+              <option value="N" selected>Non</option>
+            </select>
+          </div>
+        </div>
+        <div class="btns" style="margin-top:12px;">
+          <button class="btn primary" id="btn-b2n">Calculer Net</button>
+          <button class="btn ghost" id="btn-b2n-clear">Réinitialiser</button>
+        </div>
+        <div class="sec-title">Résultats</div>
+        <div class="results" id="b2n_results">
+          <div class="tile"><div class="label">Net à payer</div><div class="value" id="b2n_net">—</div></div>
+          <div class="tile"><div class="label">Impôt sur le revenu (IR)</div><div class="value" id="b2n_ir">—</div></div>
+          <div class="tile"><div class="label">TRIMF</div><div class="value" id="b2n_trimf">—</div></div>
+          <div class="tile"><div class="label">Total charges patronales</div><div class="value" id="b2n_total_charges">—</div></div>
+          <div class="tile"><div class="label">IPRES RG (employé)</div><div class="value" id="b2n_rg_emp">—</div></div>
+          <div class="tile"><div class="label">IPRES RG (employeur)</div><div class="value" id="b2n_rg_pat">—</div></div>
+          <div class="tile"><div class="label">IPRES RC (employé)</div><div class="value" id="b2n_rc_emp">—</div></div>
+          <div class="tile"><div class="label">IPRES RC (employeur)</div><div class="value" id="b2n_rc_pat">—</div></div>
+          <div class="tile"><div class="label">CSS Prest. familiales</div><div class="value" id="b2n_css_pfam">—</div></div>
+          <div class="tile"><div class="label">CSS Accidents du travail</div><div class="value" id="b2n_css_actr">—</div></div>
+        </div>
+      </section>
+
+      <!-- NET => BRUT -->
+      <section class="card half" id="panel-n2b">
+        <h2>Net → Brut</h2>
+        <div class="row3">
+          <div>
+            <label for="n2b_net">Net souhaité</label>
+            <input id="n2b_net" type="text" inputmode="decimal" value="500000" />
+          </div>
+          <div>
+            <label for="n2b_mois">Nombre de mois (1–12)</label>
+            <input id="n2b_mois" type="number" min="1" max="12" step="1" value="12" />
+          </div>
+          <div>
+            <label for="n2b_parts">Nombre de parts</label>
+            <input id="n2b_parts" type="text" inputmode="decimal" value="1.5" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="n2b_conjoints">Nombre de conjoints (TRIMF)</label>
+            <input id="n2b_conjoints" type="number" min="0" step="1" value="0" />
+          </div>
+          <div>
+            <label for="n2b_cadre">Cadre ?</label>
+            <select id="n2b_cadre">
+              <option value="Y">Oui</option>
+              <option value="N" selected>Non</option>
+            </select>
+          </div>
+        </div>
+        <div class="btns" style="margin-top:12px;">
+          <button class="btn primary" id="btn-n2b">Calculer Brut</button>
+          <button class="btn ghost" id="btn-n2b-clear">Réinitialiser</button>
+        </div>
+        <div class="sec-title">Résultats</div>
+        <div class="results" id="n2b_results">
+          <div class="tile"><div class="label">Brut imposable estimé</div><div class="value" id="n2b_brut">—</div></div>
+          <div class="tile"><div class="label">Impôt sur le revenu (IR)</div><div class="value" id="n2b_ir">—</div></div>
+          <div class="tile"><div class="label">TRIMF</div><div class="value" id="n2b_trimf">—</div></div>
+          <div class="tile"><div class="label">Total charges patronales</div><div class="value" id="n2b_total_charges">—</div></div>
+          <div class="tile"><div class="label">IPRES RG (employé)</div><div class="value" id="n2b_rg_emp">—</div></div>
+          <div class="tile"><div class="label">IPRES RG (employeur)</div><div class="value" id="n2b_rg_pat">—</div></div>
+          <div class="tile"><div class="label">IPRES RC (employé)</div><div class="value" id="n2b_rc_emp">—</div></div>
+          <div class="tile"><div class="label">IPRES RC (employeur)</div><div class="value" id="n2b_rc_pat">—</div></div>
+          <div class="tile"><div class="label">CSS Prest. familiales</div><div class="value" id="n2b_css_pfam">—</div></div>
+          <div class="tile"><div class="label">CSS Accidents du travail</div><div class="value" id="n2b_css_actr">—</div></div>
+        </div>
+      </section>
+
+      <!-- PARAMÈTRES & BARÈMES (rétracté par défaut) -->
+      <section class="card" id="panel-params">
+        <details class="params">
+          <summary>Paramètres & Barèmes (cliquez pour afficher)</summary>
+          <div class="params-body">
+            <p class="muted">Les constantes reprennent les valeurs par défaut de <em>FISCA_UTILITY_PKG</em>. Les barèmes IR / réductions / TRIMF sont saisis sous forme de tableaux ci-dessous.</p>
+
+            <!-- Paramètres en tableau -->
+            <div class="sec-title">Paramètres</div>
+            <table>
+              <thead><tr><th>Code</th><th>Valeur</th></tr></thead>
+              <tbody>
+                <tr><td>ABATTEMENT_IR</td><td><input id="ABATTEMENT_IR" type="text" inputmode="decimal" value="900000"/></td></tr>
+                <tr><td>TAUX_ABATTEMENT_IR</td><td><input id="TAUX_ABATTEMENT_IR" type="text" inputmode="decimal" value="0.3"/></td></tr>
+                <tr><td>TAUX_MAXIMAL_IR</td><td><input id="TAUX_MAXIMAL_IR" type="text" inputmode="decimal" value="0.43"/></td></tr>
+                <tr><td>PLAFOND_IPRES_RG</td><td><input id="PLAFOND_IPRES_RG" type="text" inputmode="decimal" value="5184000"/></td></tr>
+                <tr><td>PLAFOND_IPRES_RC</td><td><input id="PLAFOND_IPRES_RC" type="text" inputmode="decimal" value="15552000"/></td></tr>
+                <tr><td>TAUX_IPRES_RG_EMP</td><td><input id="TAUX_IPRES_RG_EMP" type="text" inputmode="decimal" value="0.056"/></td></tr>
+                <tr><td>TAUX_IPRES_RG_PAT</td><td><input id="TAUX_IPRES_RG_PAT" type="text" inputmode="decimal" value="0.084"/></td></tr>
+                <tr><td>TAUX_IPRES_RC_EMP</td><td><input id="TAUX_IPRES_RC_EMP" type="text" inputmode="decimal" value="0.024"/></td></tr>
+                <tr><td>TAUX_IPRES_RC_PAT</td><td><input id="TAUX_IPRES_RC_PAT" type="text" inputmode="decimal" value="0.036"/></td></tr>
+                <tr><td>TAUX_CSS_PFAM</td><td><input id="TAUX_CSS_PFAM" type="text" inputmode="decimal" value="0.07"/></td></tr>
+                <tr><td>TAUX_CSS_ACTR</td><td><input id="TAUX_CSS_ACTR" type="text" inputmode="decimal" value="0.01"/></td></tr>
+                <tr><td>PLAFOND_CSS_PFAM</td><td><input id="PLAFOND_CSS_PFAM" type="text" inputmode="decimal" value="756000"/></td></tr>
+                <tr><td>PLAFOND_CSS_ACTR</td><td><input id="PLAFOND_CSS_ACTR" type="text" inputmode="decimal" value="756000"/></td></tr>
+              </tbody>
+            </table>
+
+            <!-- Barème IR -->
+            <div class="sec-title">Barème IR</div>
+            <table id="tbl_bareme_ir">
+              <thead><tr><th>Montant min</th><th>Montant max</th><th>Taux</th></tr></thead>
+              <tbody>
+                <tr><td><input type="text" value="0"/></td><td><input type="text" value="630000"/></td><td><input type="text" value="0"/></td></tr>
+                <tr><td><input type="text" value="630000"/></td><td><input type="text" value="1500000"/></td><td><input type="text" value="0.2"/></td></tr>
+                <tr><td><input type="text" value="1500000"/></td><td><input type="text" value="4000000"/></td><td><input type="text" value="0.3"/></td></tr>
+                <tr><td><input type="text" value="4000000"/></td><td><input type="text" placeholder="null (illimité)"/></td><td><input type="text" value="0.4"/></td></tr>
+              </tbody>
+            </table>
+
+            <!-- Réduction d'impôt -->
+            <div class="sec-title">Réduction d'impôt</div>
+            <table id="tbl_reduction_ir">
+              <thead><tr><th>Nombre de parts</th><th>Taux de réduction</th><th>Montant min</th><th>Montant max</th></tr></thead>
+              <tbody>
+                <tr><td><input type="text" value="1"/></td><td><input type="text" value="0"/></td><td><input type="text" value="0"/></td><td><input type="text" value="0"/></td></tr>
+                <tr><td><input type="text" value="1.5"/></td><td><input type="text" value="0.1"/></td><td><input type="text" value="0"/></td><td><input type="text" value="300000"/></td></tr>
+                <tr><td><input type="text" value="2"/></td><td><input type="text" value="0.15"/></td><td><input type="text" value="0"/></td><td><input type="text" value="500000"/></td></tr>
+              </tbody>
+            </table>
+
+            <!-- TRIMF -->
+            <div class="sec-title">Barème TRIMF</div>
+            <table id="tbl_bareme_trimf">
+              <thead><tr><th>Montant min</th><th>Montant max</th><th>Taux (forfait annuel)</th></tr></thead>
+              <tbody>
+                <tr><td><input type="text" value="0"/></td><td><input type="text" value="1000000"/></td><td><input type="text" value="0"/></td></tr>
+                <tr><td><input type="text" value="1000000"/></td><td><input type="text" value="5000000"/></td><td><input type="text" value="10000"/></td></tr>
+                <tr><td><input type="text" value="5000000"/></td><td><input type="text" placeholder="null (illimité)"/></td><td><input type="text" value="20000"/></td></tr>
+              </tbody>
+            </table>
+
+            <!-- Textareas cachés pour compat avec le JS existant -->
+            <textarea id="bareme_ir" style="display:none"></textarea>
+            <textarea id="reduction_ir" style="display:none"></textarea>
+            <textarea id="bareme_trimf" style="display:none"></textarea>
+
+            <div class="btns" style="margin-top:12px;">
+              <button class="btn primary" id="btn-save-params">Appliquer les paramètres</button>
+              <button class="btn ghost" id="btn-load-sample">Charger échantillon</button>
+              <span class="muted" id="params-status">Paramètres en mémoire</span>
+            </div>
+          </div>
+        </details>
+      </section>
+    </div>
+  </div>
+
+  <!-- Script de sérialisation des tableaux → JSON (avant le JS principal) -->
+  <script>
+    function tableToJSON(tblId, mapper){
+      const rows = Array.from(document.querySelectorAll(`#${tblId} tbody tr`));
+      return rows.map(tr => mapper(Array.from(tr.querySelectorAll('input')).map(i => i.value.trim())));
+    }
+    // Capture le clic AVANT le handler du script principal
+    window.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btn-save-params');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          // IR
+          const bir = tableToJSON('tbl_bareme_ir', ([min,max,taux]) => ({
+            montant_min: Number((min||'0').replace(',', '.')),
+            montant_max: (max? Number(max.replace(',', '.')) : null),
+            taux: Number((taux||'0').replace(',', '.'))
+          }));
+          // Réduction
+          const rir = tableToJSON('tbl_reduction_ir', ([parts,taux,min,max]) => ({
+            nombre_parts: Number((parts||'0').replace(',', '.')),
+            taux_reduction: Number((taux||'0').replace(',', '.')),
+            montant_min: Number((min||'0').replace(',', '.')),
+            montant_max: Number((max||'0').replace(',', '.'))
+          }));
+          // TRIMF
+          const btf = tableToJSON('tbl_bareme_trimf', ([min,max,taux]) => ({
+            montant_min: Number((min||'0').replace(',', '.')),
+            montant_max: (max? Number(max.replace(',', '.')) : null),
+            taux: Number((taux||'0').replace(',', '.'))
+          }));
+          document.getElementById('bareme_ir').value = JSON.stringify(bir);
+          document.getElementById('reduction_ir').value = JSON.stringify(rir);
+          document.getElementById('bareme_trimf').value = JSON.stringify(btf);
+        }, {capture:true});
+      }
+    });
+  </script>
+
+  <!-- JS externe (nom inchangé) -->
+  <script src="simulateur_app.js"></script>
+</body>
+</html>
