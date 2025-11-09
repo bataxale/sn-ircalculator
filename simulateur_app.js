@@ -54,9 +54,12 @@ function loadSample() {
     { nombre_parts: 5.0, taux_reduction: 0.45, montant_min:800000, montant_max: 3180000 }
   ], null, 2);
   document.getElementById('bareme_trimf').value = JSON.stringify([
-    { montant_min:0,       montant_max: 1000000, taux: 0 },
-    { montant_min:1000000, montant_max: 5000000, taux: 10000 },
-    { montant_min:5000000, montant_max: null,    taux: 20000 }
+    { montant_min:0,       montant_max: 600000, taux: 900 },
+    { montant_min:600000, montant_max: 999999, taux: 3600 },
+    { montant_min:1000000, montant_max: 1999999, taux: 4800 },
+    { montant_min:2000000, montant_max: 6999999, taux: 12000 },
+    { montant_min:7000000, montant_max: 11999999, taux: 18000 },
+    { montant_min:12000000, montant_max: 999999999999, taux: 36000 }
   ], null, 2);
   applyParamsFromUI();
 }
