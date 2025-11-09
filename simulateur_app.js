@@ -34,17 +34,24 @@ function applyParamsFromUI() {
 
 function loadSample() {
   document.getElementById('bareme_ir').value = JSON.stringify([
-    { montant_min:0, montant_max: 630000, taux: 0.0},
-    { montant_min:630000, montant_max: 1500000, taux: 0.2},
-    { montant_min:1500000, montant_max: 4000000, taux: 0.3},
-    { montant_min:4000000, montant_max: null, taux: 0.4}
+    { montant_min:        0, montant_max:   630000,  taux: 0.00 },
+    { montant_min:   630001, montant_max:  1500000,  taux: 0.20 },
+    { montant_min:  1500001, montant_max:  4000000,  taux: 0.30 },
+    { montant_min:  4000001, montant_max:  8000000,  taux: 0.35 },
+    { montant_min:  8000001, montant_max: 13500000,  taux: 0.37 },
+    { montant_min: 13500001, montant_max: 50000000,  taux: 0.40 },
+    { montant_min: 50000001, montant_max:       null, taux: 0.43 }
   ], null, 2);
   document.getElementById('reduction_ir').value = JSON.stringify([
-    { nombre_parts: 1,   taux_reduction: 0.0,  montant_min: 0, montant_max: 0},
-    { nombre_parts: 1.5, taux_reduction: 0.1,  montant_min: 0, montant_max: 300000},
-    { nombre_parts: 2,   taux_reduction: 0.15, montant_min: 0, montant_max: 500000},
-    { nombre_parts: 2.5, taux_reduction: 0.2,  montant_min: 0, montant_max: 700000},
-    { nombre_parts: 3,   taux_reduction: 0.25, montant_min: 0, montant_max: 900000}
+    { nombre_parts: 1.0, taux_reduction: 0.00, montant_min:   0,  montant_max:      0 },
+    { nombre_parts: 1.5, taux_reduction: 0.10, montant_min:100000, montant_max:  300000 },
+    { nombre_parts: 2.0, taux_reduction: 0.15, montant_min:200000, montant_max:  650000 },
+    { nombre_parts: 2.5, taux_reduction: 0.20, montant_min:300000, montant_max: 1100000 },
+    { nombre_parts: 3.0, taux_reduction: 0.25, montant_min:400000, montant_max: 1650000 },
+    { nombre_parts: 3.5, taux_reduction: 0.30, montant_min:500000, montant_max: 2030000 },
+    { nombre_parts: 4.0, taux_reduction: 0.35, montant_min:600000, montant_max: 2490000 },
+    { nombre_parts: 4.5, taux_reduction: 0.40, montant_min:700000, montant_max: 2755000 },
+    { nombre_parts: 5.0, taux_reduction: 0.45, montant_min:800000, montant_max: 3180000 }
   ], null, 2);
   document.getElementById('bareme_trimf').value = JSON.stringify([
     { montant_min:0,       montant_max: 1000000, taux: 0 },
