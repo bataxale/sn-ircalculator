@@ -186,34 +186,50 @@
             <table id="tbl_bareme_ir">
               <thead><tr><th>Montant min</th><th>Montant max</th><th>Taux</th></tr></thead>
               <tbody>
-                <tr><td><input type="text" value="0"/></td><td><input type="text" value="630000"/></td><td><input type="text" value="0"/></td></tr>
-                <tr><td><input type="text" value="630000"/></td><td><input type="text" value="1500000"/></td><td><input type="text" value="0.2"/></td></tr>
-                <tr><td><input type="text" value="1500000"/></td><td><input type="text" value="4000000"/></td><td><input type="text" value="0.3"/></td></tr>
-                <tr><td><input type="text" value="4000000"/></td><td><input type="text" placeholder="null (illimité)"/></td><td><input type="text" value="0.4"/></td></tr>
+                <tr><td><input type="text" value="0"/></td><td><input type="text" value="630000"/></td><td><input type="text" value="0.00"/></td></tr>
+                <tr><td><input type="text" value="630001"/></td><td><input type="text" value="1500000"/></td><td><input type="text" value="0.20"/></td></tr>
+                <tr><td><input type="text" value="1500001"/></td><td><input type="text" value="4000000"/></td><td><input type="text" value="0.30"/></td></tr>
+                <tr><td><input type="text" value="4000001"/></td><td><input type="text" value="8000000"/></td><td><input type="text" value="0.35"/></td></tr>
+                <tr><td><input type="text" value="8000001"/></td><td><input type="text" value="13500000"/></td><td><input type="text" value="0.37"/></td></tr>
+                <tr><td><input type="text" value="13500001"/></td><td><input type="text" value="50000000"/></td><td><input type="text" value="0.40"/></td></tr>
+                <tr><td><input type="text" value="50000001"/></td><td><input type="text" placeholder="null (illimité)"/></td><td><input type="text" value="0.43"/></td></tr>
               </tbody>
             </table>
+
+
 
             <!-- Réduction d'impôt -->
             <div class="sec-title">Réduction d'impôt</div>
             <table id="tbl_reduction_ir">
               <thead><tr><th>Nombre de parts</th><th>Taux de réduction</th><th>Montant min</th><th>Montant max</th></tr></thead>
               <tbody>
-                <tr><td><input type="text" value="1"/></td><td><input type="text" value="0"/></td><td><input type="text" value="0"/></td><td><input type="text" value="0"/></td></tr>
-                <tr><td><input type="text" value="1.5"/></td><td><input type="text" value="0.1"/></td><td><input type="text" value="0"/></td><td><input type="text" value="300000"/></td></tr>
-                <tr><td><input type="text" value="2"/></td><td><input type="text" value="0.15"/></td><td><input type="text" value="0"/></td><td><input type="text" value="500000"/></td></tr>
+                <tr><td><input type="text" value="1.0"/></td><td><input type="text" value="0.00"/></td><td><input type="text" value="0"/></td><td><input type="text" value="0"/></td></tr>
+                <tr><td><input type="text" value="1.5"/></td><td><input type="text" value="0.10"/></td><td><input type="text" value="100000"/></td><td><input type="text" value="300000"/></td></tr>
+                <tr><td><input type="text" value="2.0"/></td><td><input type="text" value="0.15"/></td><td><input type="text" value="200000"/></td><td><input type="text" value="650000"/></td></tr>
+                <tr><td><input type="text" value="2.5"/></td><td><input type="text" value="0.20"/></td><td><input type="text" value="300000"/></td><td><input type="text" value="1100000"/></td></tr>
+                <tr><td><input type="text" value="3.0"/></td><td><input type="text" value="0.25"/></td><td><input type="text" value="400000"/></td><td><input type="text" value="1650000"/></td></tr>
+                <tr><td><input type="text" value="3.5"/></td><td><input type="text" value="0.30"/></td><td><input type="text" value="500000"/></td><td><input type="text" value="2030000"/></td></tr>
+                <tr><td><input type="text" value="4.0"/></td><td><input type="text" value="0.35"/></td><td><input type="text" value="600000"/></td><td><input type="text" value="2490000"/></td></tr>
+                <tr><td><input type="text" value="4.5"/></td><td><input type="text" value="0.40"/></td><td><input type="text" value="700000"/></td><td><input type="text" value="2755000"/></td></tr>
+                <tr><td><input type="text" value="5.0"/></td><td><input type="text" value="0.45"/></td><td><input type="text" value="800000"/></td><td><input type="text" value="3180000"/></td></tr>
               </tbody>
             </table>
+
 
             <!-- TRIMF -->
             <div class="sec-title">Barème TRIMF</div>
             <table id="tbl_bareme_trimf">
               <thead><tr><th>Montant min</th><th>Montant max</th><th>Taux (forfait annuel)</th></tr></thead>
               <tbody>
-                <tr><td><input type="text" value="0"/></td><td><input type="text" value="1000000"/></td><td><input type="text" value="0"/></td></tr>
-                <tr><td><input type="text" value="1000000"/></td><td><input type="text" value="5000000"/></td><td><input type="text" value="10000"/></td></tr>
-                <tr><td><input type="text" value="5000000"/></td><td><input type="text" placeholder="null (illimité)"/></td><td><input type="text" value="20000"/></td></tr>
+                <tr><td><input type="text" value="0"/></td><td><input type="text" value="600000"/></td><td><input type="text" value="900"/></td></tr>
+                <tr><td><input type="text" value="600000"/></td><td><input type="text" value="999999"/></td><td><input type="text" value="3600"/></td></tr>
+                <tr><td><input type="text" value="1000000"/></td><td><input type="text" value="1999999"/></td><td><input type="text" value="4800"/></td></tr>
+                <tr><td><input type="text" value="2000000"/></td><td><input type="text" value="6999999"/></td><td><input type="text" value="12000"/></td></tr>
+                <tr><td><input type="text" value="7000000"/></td><td><input type="text" value="11999999"/></td><td><input type="text" value="18000"/></td></tr>
+                <tr><td><input type="text" value="12000000"/></td><td><input type="text" placeholder="null (illimité)"/></td><td><input type="text" value="36000"/></td></tr>
               </tbody>
             </table>
+
 
             <!-- Textareas cachés pour compat avec le JS existant -->
             <textarea id="bareme_ir" style="display:none"></textarea>
@@ -273,3 +289,4 @@
   <script src="simulateur_app.js"></script>
 </body>
 </html>
+
